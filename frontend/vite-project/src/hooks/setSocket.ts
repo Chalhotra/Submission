@@ -1,27 +1,34 @@
 import { useEffect, useState } from "react";
 
-// this hook will basically create a socket connection for us, and return to us the socket
 export default function useSocket() {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [connection, setConnection] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080");
-    ws.onopen = () => {
-      setSocket(ws);
+    const socket = new WebSocket("ws://localhost:8080");
+
+    socket.onopen = () => {
+      console.log("WebSocket connected");
+      setConnection(socket);
     };
 
-    ws.onclose = () => {
-      setSocket(null);
+    socket.onclose = () => {
+      console.log("WebSocket disconnected");
+      setConnection(null);
     };
 
-    ws.onmessage = (evt) => {
-      const saman = JSON.parse(evt.data);
-      console.log(saman);
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("Incoming message:", data);
+      } catch (err) {
+        console.error("Error parsing WebSocket message:", err);
+      }
     };
 
     return () => {
-      ws.close();
+      socket.close();
     };
   }, []);
-  return socket;
+
+  return connection;
 }
