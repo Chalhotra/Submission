@@ -14,7 +14,8 @@ export const Chessboard = ({
       {board.map((row, i) => {
         return (
           <div className="row">
-            {row.map((square, j) => {
+            {row.map((_, j) => {
+              // _ to be replaced by square, in order to use the square
               return (
                 <div
                   className={i + (j % 2) == 0 ? "bg-green-300" : "bg-green-500"}
